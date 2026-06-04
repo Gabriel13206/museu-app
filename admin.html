@@ -200,22 +200,7 @@ async function extrairComIA() {
   btn.innerHTML = '<span class="spin"></span> A analisar o documento...';
   btn.disabled = true;
   try {
-    const pdfjsLib = window['pdfjs-dist/build/pdf'];
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    const arrayBuffer = await arquivoPDF.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    let textoCompleto = '';
-    for (let i = 1; i <= Math.min(pdf.numPages, 5); i++) {
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      textoCompleto += content.items.map(item => item.str).join(' ') + '\n';
-    }
-    const formData = new FormData();
-    formData.append('file', arquivoPDF);
-    const res = await fetch('/api/extrair', {
-      method: 'POST',
-      body: formData
-    });
+    const formData = new FormData();\n    formData.append('file', arquivoPDF);\n    const res = await fetch('/api/extrair', {\n      method: 'POST',\n      body: formData\n    });
     const data = await res.json();
     const text = data.choices?.[0]?.message?.content || '';
     const match = text.replace(/```json/g,'').replace(/```/g,'').trim().match(/\{[\s\S]*\}/);
@@ -328,3 +313,4 @@ document.getElementById('tela-lista').style.display = 'none';
 </script>
 </body>
 </html>
+
