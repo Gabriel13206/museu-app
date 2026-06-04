@@ -210,14 +210,11 @@ async function extrairComIA() {
       const content = await page.getTextContent();
       textoCompleto += content.items.map(item => item.str).join(' ') + '\n';
     }
-    const OR_KEY = 'CHAVE_AQUI';
-    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const formData = new FormData();
+    formData.append('file', arquivoPDF);
+    const res = await fetch('/api/extrair', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + OR_KEY },
-      body: JSON.stringify({
-        model: 'meta-llama/llama-3.3-70b-instruct:free',
-        messages: [{ role: 'user', content: 'Analisa este texto e extrai informacao. Responde APENAS com este JSON:\n{"nome":"","modelo":"","fabricante":"","ano":"","local_uso":"","gentileza":"","codigo":"","descricao":""}\n\nTEXTO:\n' + textoCompleto.substring(0,3000) }]
-      })
+      body: formData
     });
     const data = await res.json();
     const text = data.choices?.[0]?.message?.content || '';
